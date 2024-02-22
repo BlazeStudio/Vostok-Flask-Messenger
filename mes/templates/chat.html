@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+{% block content %}
+    <style>
+      #icons_chat {
+        width: 50px;
+        height: 50px;
+          margin-left: 10px;
+          margin-right: 13px;
+      }
+      #upper {
+          margin-top: 5px;
+          margin-bottom: -10px;
+      }
+      h6{
+          color: #FFFFFF;
+          margin-bottom: 5px;
+      }
+      #message{
+          margin-top: 5px;
+          margin-bottom: 7px;
+      }
+    </style>
+    {% if user.id == friend.id %}
+        <h1>НЕ ВАУ!</h1>
+    {% elif not(user.is_following(friend)) %}
+        <h1>ВАУ!</h1>
+    {% else %}
+      <div class="card" id="myForm">
+        <div class="card-header white d-flex p-1" id="toggle" style="cursor: pointer;">
+          <div class="heading d-flex justify-content-start">
+            <div class="profile-photo" id="upper">
+                <a href="{{ url_for('user_account' , username= friend.username) }}">
+              <img id="icons_chat" src="{{ url_for('static', filename='profile_pics/' + friend.image_file )  }}" class="rounded-circle account-img" >
+                </a>
+            </div>
+          </div>
+            <div>
+            <div class="data" id="upper">
+              <a href="{{ url_for('user_account' , username= friend.username) }}" style="text-decoration: none; color: #444445" class="name mb-0"><strong>{{ friend.username }}</strong></a>
+
+              {% if friend.online %}
+              <img id="status" src="../static/site_pics/online.png" alt="Online" width="10" height="10">
+              <p class="activity text-muted mb-0">В сети</p>
+              {% else %}
+              <img id="status" src="../static/site_pics/offline.png" alt="Offline" width="10" height="10">
+              <p class="activity text-muted mb-0">Не в сети</p>
+              {%endif %}
+            </div>
+            </div>
+          <div class="icons grey-text">
+            <a class="feature"><i class="fas fa-video mr-2"></i></a>
+            <a class="feature"><i class="fas fa-phone mr-2"></i></a>
+            <a class="feature"><i class="fas fa-cog mr-2"></i></a>
+            <a id="closeButton"><i class="fas fa-times mr-2"></i></a>
+          </div>
+        </div>
+        <div class="my-custom-scrollbar" >
+          <div class="card-body p-3">
+            <div class="chat-message">
+              <div class="media mb-3">
+                <div class="media-body">
+                </div>
+              </div>
+              <div id="messages">
+              {% for message in messages %}
+              {% if message.sender_id == current_user.id %}
+        <div class="card z-depth-0 mb-2 message-text" style="width: max-content; max-width: 500px; margin:0 auto; margin-right: 0; background-color:#7299df;">
+                <div class="card-body p-2">
+                  <a class="card-text text-white" style =" font-family: 'Tahoma';font-size: 14px;">{{ message.message }}</a><br>
+                    <div style="text-align: left"><small class="" style="color: #eaf0fa">{{ message.date_posted.strftime('%H:%M') }}</small>
+{#                       <a href="{{ url_for('delete_message', message=message.id) }}"><img align="right" style="margin-left: 15px; margin-top: 6px;" src="../static/site_pics/ban.png" alt="Ban" width="17" height="17"></a>#}
+                </div>
+                </div>
+               </div>
+              <br>
+              {% else %}
+              <div class="card bg-light z-depth-0 mb-1 message-text" style="width: max-content; max-width: 500px;">
+                <div class="card-body p-2">
+                  <a class="card-text black-text" id="text_f" style =" font-family: 'Tahoma';font-size: 14px;">{{ message.message }}</a><br>
+                    <small class="" style="color: #777;">{{ message.date_posted.strftime('%H:%M') }}</small>
+                </div>
+               </div>
+              <br>
+               {% endif %}
+               {% endfor %}
+             </div>
+          </div>
+        </div>
+        <div class="card-footer text-muted white pt-1 pb-2 px-3">
+          <input type="text" id="message" class="form-control" placeholder="Начните набирать Ваше сообщение..." onkeypress="handleKeyPress(event, {{ friend.id }})">
+          <button type="submit" class="btn btn-primary btn-sm mt-1 mb-2" onclick="send_message($(message).val(), {{ friend.id }}); document.getElementById('message').value = '';" ><h6>Отправить</h6></button>
+          <div>
+            <a><i class="far fa-file-image mr-2"></i></a>
+            <a><i class="far fa-laugh mr-2"></i></a>
+            <a><i class="fas fa-gamepad mr-2"></i></a>
+            <a><i class="fas fa-paperclip mr-2"></i></a>
+            <a><i class="fas fa-camera mr-2"></i></a>
+            <a><i class="fas fa-thumbs-up float-right"></i></a>
+          </div>
+        </div>
+      </div>
+
+
+      <script>
+function handleKeyPress(event, friendId) {
+  if (event.key === "Enter") {
+    send_message($(message).val(), friendId);
+    document.getElementById('message').value = '';
+    // Предотвращаем стандартное действие клавиши "Enter" в текстовом поле
+    event.preventDefault();
+  }
+}</script>
+
+</div>
+              {%endif %}
+    <script type="text/JavaScript" src="{{ url_for('static' , filename='chat.js')}}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+     <script type="text/javascript">
+       setInterval(send_message , 1000 , 'voidmessagevoidmessage' , {{ friend.id }} );
+       send_message( '' ,{{ friend.id }});
+     </script>
+{% endblock content %}

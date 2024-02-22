@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <div class="content-section" style="background-color: #FFFFFF ; border: solid #7299df;">
+      <div class="media">
+        <div class="media-body" style="width:800px; margin:0 auto; display: flow">
+          <img class="rounded-circle account-img" style="border: solid #7299df;" src="{{ image_file }}">
+      </div>
+          <div style="width:800px; margin:0 auto; ">
+          <a><h2 style="margin: 0;">{{ user.username }}</h2></a>
+                      </div>
+
+    </div>
+              <br><br><br>
+            <h5>Причина жалобы - {{ complaint.reason }}</h5>
+            <h5>Отправитель - {{ sender.username }}</h5>
+              {% if user.status == "" or user.status == None%}
+              <h5>Статус пользователя - отсутствует</h5>
+    {% else %} <h5>Статус пользователя - {{ user.status }}</h5>{% endif %}
+        {% if complaint.commentary != None %}
+           <h5>Комментарий от отправителя - {{ complaint.commentary }}</h5>
+        {% endif %}
+          <br>
+    <div style= "">
+          <a class="btn btn-success btn-sm mt-1 mb-1" href="{{ url_for('complaint_delete' , user_id = user.id, user_choice = 'accept') }}"><h5 style="color: #FFFFFF;
+          margin-bottom: 5px; ">Принять жалобу</h5></a>ㅤ
+        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{{ url_for('complaint_delete' , user_id = user.id, user_choice = 'deny') }}"><h5 style="color: #FFFFFF;
+          margin-bottom: 5px;">Отклонить жалобу</h5></a>
+    </div>
+{% endblock content %}

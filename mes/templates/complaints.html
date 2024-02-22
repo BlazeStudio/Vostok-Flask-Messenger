@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% if user_list == [] %} <h4><a class="article-title" >Жалоб не найдено</a></h4>
+    {% else %}<legend class="border-bottom mb-4"> Жалобы</legend>    {% endif %}
+{% for user in user_list %}
+        <article class="media content-section" id="requestwaiting {{ user.id }}">
+             <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + user.image_file) }}">
+          <div class="media-body">
+              <h2><a href="{{ url_for('complaint_analyze' , user_id = user.id) }}" style="text-decoration: none; color: #444445" class="article-title" >{{ user.username }}</a></h2>
+          </div>
+          <div>
+           <a class="btn btn-success btn-sm mt-1 mb-1" href="{{ url_for('complaint_analyze' , user_id = user.id) }}"><h5 style="color: #FFFFFF;
+          margin-bottom: 5px;">Перейти</h5></a><br></div>
+        </article>
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="color: #f2d4bc;">
+      <div class="modal-content" style="color: #f2d4bc;">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Delete {{ user.username }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <form action="{{ url_for('accept_or_delete', follower_id=user.id , user_choice='delete') }}" method="GET">
+            <input class="btn btn-danger" type="submit" value="Delete">
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+{% endfor %}
+{% endblock content %}

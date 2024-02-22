@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h3>Что нового?</h3>
+    <br>
+    <div class="media" style="">
+    <div class="content-section w-5" style="background-color: #FFFFFF ; border: solid #7299df; ">
+    {% if users_requesting == [] %}
+        <i>Ваш список друзей пуст. Самое время добавить кого-нибудь!</i>
+        <p></p>
+        <br>
+        <div>
+        <a class="btn btn-secondary" href="{{ url_for('search' , username=search) }} " style="margin: 0 auto;display: block;">Найти</a></div>
+    {% else %}
+        <i>Не забывайте про своих друзей! Напишите им!</i>
+                  {% for user in users_requesting %}
+        <article class="media content-section" style="border: medium double #7299df;" id="requestwaiting {{ user.id }}">
+             <a href="{{ url_for('chat' , user_id=user.id ) }}"><img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + user.image_file) }}"></a>
+          <div class="media-body">
+              <h4><a href="{{ url_for('chat' , user_id=user.id ) }}" style="text-decoration: none; color: #444445" class="article-title" >{{ user.username }}</a></h4>
+                    {% if user.online %}
+              <a class="activity mb-0"><h6 style="color: #05b714;">В сети</h6></a>
+                    {% else %}
+              <a class="activitymb-0"><h6 style="color: #e74c3c">Не в сети</h6></a>
+                    {% endif %}
+               {% for message in messages %}
+                   {% if ((user.id == message.receiver_id) or (user.id == message.sender_id)) %}
+                   <small style="font-size: 15px; color: #666;">{{ message.message }}</small>
+                       <small class="" style="color: #666">{{ message.date_posted.strftime('%H:%M') }}</small>
+                   {% endif %}{% endfor %}
+          </div>
+          <div>
+<br>
+        </article>
+
+{% endfor %}
+    {% endif %}</div>
+    <div class="content-section w-50" style="background-color: #FFFFFF ; border: solid #7299df; margin-left: 20px">
+        {% if users_requesting2 == [] %}
+        <i>Заявок в друзья не найдено:(</i>
+    {% else %}
+            <i>Заявки, ожидающие решения</i>
+                  {% for user in users_requesting2 %}
+        <article class="media content-section" style="border: medium double #7299df;" id="requestwaiting {{ user.id }}">
+             <a href="{{ url_for('user_account' , username= user.username) }}"><img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + user.image_file) }}"></a>
+          <div class="media-body">
+              <h4><a href="{{ url_for('user_account' , username= user.username) }}" style="text-decoration: none; color: #444445" class="article-title" >{{ user.username }}</a></h4>
+                    {% if user.online %}
+              <a class="activity mb-0"><h6 style="color: #05b714;">В сети</h6></a>
+                    {% else %}
+              <a class="activitymb-0"><h6 style="color: #e74c3c">Не в сети</h6></a>
+                    {% endif %}
+          </div>
+<br>
+        </article>
+
+{% endfor %}
+    {% endif %}
+
+                 </div>
+{#    <div class="content-section w-50" style="background-color: #FFFFFF ; border: solid #7299df; margin-left: 20px; display: inline">#}
+{#        {% if users_requesting2 == [] %}#}
+{#        <i>Заявок в друзья не найдено:(</i>#}
+{#    {% else %}#}
+{#            <i>Заявки, ожидающие решения</i>#}
+{#                  {% for user in users_requesting2 %}#}
+{#        <article class="media content-section" style="border: medium double #7299df;" id="requestwaiting {{ user.id }}">#}
+{#             <a href="{{ url_for('user_account' , username= user.username) }}"><img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + user.image_file) }}"></a>#}
+{#          <div class="media-body">#}
+{#              <h4><a href="{{ url_for('user_account' , username= user.username) }}" style="text-decoration: none; color: #444445" class="article-title" >{{ user.username }}</a></h4>#}
+{#                    {% if user.online %}#}
+{#              <a class="activity mb-0"><h6 style="color: #05b714;">В сети</h6></a>#}
+{#                    {% else %}#}
+{#              <a class="activitymb-0"><h6 style="color: #e74c3c">Не в сети</h6></a>#}
+{#                    {% endif %}#}
+{#          </div>#}
+{#          <div>#}
+{#<br></div>#}
+{#        </article>#}
+{##}
+{#{% endfor %}#}
+{#    {% endif %}#}
+{#                 </div>#}
+{##}
+{#</div>#}
+{% endblock content %}

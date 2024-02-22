@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section" style="background-color: #FFFFFF ; border: solid #7299df;">
+      <div class="media">
+        <div class="media-body">
+          <img class="rounded-circle account-img" style="border: solid #7299df;" src="{{ image_file }}">
+        </div>
+      <div style="width:800px; margin:0 auto;">
+          <a><h2 style="margin: 0; display: inline;">{{ user.username }}</h2></a>
+      {% if user.admin == True %}
+          <img src="../static/site_pics/admin2.png" style="margin-top: -10px; margin-left: -4px" alt="" title="Администратор" width="20" height="20">{% endif %}
+          {% if user.online %}
+              <a class="activity mb-0"><h6 style="color: #05b714;">В сети</h6></a>
+          {% else %}
+              <a class="activitymb-0"><h6 style="color: #e74c3c">Не в сети</h6></a>
+          {% endif %}
+
+          <p style="width: 320px"><a href="{{ url_for('user_friend_list', user_id = user.id) }}" style="color: #333333">Друзья: {{friends}}</a><br> <a href="{{ url_for('user_requests', user_id = user.id) }}" style="color: #333333">Подписчики: {{followers}}</a></p>
+      <legend class="border mb-2" style="color:#707171; width: 200px; text-align: left"></legend>
+      {% if user.status != None %}<small style="">{{ user.status }}</small>{% endif %}
+      </div>
+          {% if user != current_user %}
+              <div>
+              <a class="btn btn-primary btn" href="{{ url_for('following' ,followed_id= user.id) }}"><h5 style="color: #FFFFFF;
+          margin-bottom: 5px;">{{ followed_or_not }}</h5></a></br>
+              </div>
+              {% if user.admin != True %}
+              <a data-toggle="modal" data-target="#deleteModal"><img src="../static/site_pics/admin.png" style="" title="Пожаловаться на пользователя" width="30" height="30"></a>{% endif %}
+                 </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="color: #f2d4bc;">
+      <div class="modal-content" style="color: #f2d4bc;">
+        <div class="modal-header" style="text-align: center">
+          <h5 class="modal-title" id="deleteModalLabel">Жалоба на пользователя</h5></div>
+            <form action="{{ url_for('complaint_send', user_id = user.id) }}" style="color: #555555; text-align: center" method="POST">
+   <p><b>Пожалуйста, сообщите нам причину, по которой пользователь {{ user.username }} должен быть заблокирован</b></p>
+    <p><input name="reasons" type="checkbox" value="Неприемлемый аватар">Неприемлемый аватар</p>
+    <p><input name="reasons" type="checkbox" value="Неприемлемый статус">Неприемлемый статус</p>
+                <div class="modal-footer">
+             <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
+            <input class="btn btn-danger" type="submit" name="submit_button" value="Отправить">
+                        </div>
+  </form>
+      </div>
+    </div>
+</div>
+        {% if current_user.is_following(user) %}
+                  </br>
+              <a class="btn btn-primary btn" id="status" href="{{ url_for('chat' , user_id=user.id ) }}"><h5 style="color: #FFFFFF;
+          margin-bottom: 5px;">Перейти в чат</h5></a></br></br>
+          {% endif %}
+          {% endif %}
+
+
+         <form method="POST" action="" style="width:800px; margin:0 auto;" enctype="multipart/form-data">
+
+             {{ form.hidden_tag() }}
+            <fieldset class="form-group" style="">
+            {% if user == current_user %}
+                <legend class="border-bottom mb-3" style="color:#707171; text-align: center;"> Информация</legend>
+                <div class="form-group" style="color:#707171;" >
+                    {{ form.username.label(class="form-control-label") }}
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control form-control-lg-2") }}
+                    {% endif %}
+                    {% endif %}
+                </div>
+
+                        {% if user == current_user %}
+                <div class="form-group" style="color:#707171;" >
+                    {{ form.status.label(class="form-control-label") }}
+                    {% if form.status.errors %}
+                        {{ form.status(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.status.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.status(class="form-control form-control-lg-2") }}
+                    {% endif %}
+                    {% endif %}
+                </div>
+
+                {% if user == current_user %}
+                 <div class="form-group" style="color:#707171;">
+                    {{ form.picture.label() }}
+                    {{ form.picture(class="form-control-file") }}
+                    {% if form.picture.errors %}
+                        {% for error in form.picture.errors %}
+                            <span class="text-danger">{{ error }}</span></br>
+                        {% endfor %}
+                    {% endif %}
+                 </div>
+            </fieldset>
+            <div class="form-group" style="">
+                {{ form.submit(class="btn btn" , style="color:white; position:sticky; background-color:#4a76c3;") }}
+            </div>
+            {% endif %}
+        </form>
+    </div>
+{% endblock content %}
